@@ -1,1188 +1,418 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดเก็บเอกสารราชการ</title>
-    
-    <!-- Google Fonts: Sarabun -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Sarabun', 'sans-serif'] },
-                    colors: {
-                        primary: '#0C7C82',
-                        secondary: '#35B4B0',
-                        accent1: '#26A69A',
-                        accent2: '#AED581',
-                        accent3: '#FFCA28',
-                        accent4: '#FF8A65',
-                        danger: '#EF5350',
-                        purple: '#4A2C6D',
-                        redDark: '#D32F2F',
-                        orange: '#F57C00',
-                        yellowDark: '#FBC02D',
-                        blueDark: '#0288D1',
-                        bglight: '#f8fafc'
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดเก็บเอกสารราชการ - โรงเรียนยูงทองพิทยาคม</title>
+  
+  <!-- Google Fonts: Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+              sidebar: '#0f3d39'
             }
+          }
         }
-    </script>
-
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- SheetJS for Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-    <style>
-        body { background-color: #f0fdfa; overflow-x: hidden; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #35B4B0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0C7C82; }
-
-        /* Skeleton Loading */
-        .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 0.5rem; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* View toggles */
-        .grid-view-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-        .table-view-container { display: block; overflow-x: auto; }
-        
-        /* Drag & Drop */
-        .drop-zone { border: 2px dashed #35B4B0; transition: all 0.3s ease; }
-        .drop-zone.dragover { background-color: #e0f2fe; border-color: #0C7C82; }
-
-        /* Mobile Nav & Sidebar */
-        #mobile-nav { backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.9); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
-        .menu-item-active { background-color: #e0f2fe; color: #0C7C82; font-weight: 600; border-right: 4px solid #0C7C82; }
-        
-        /* Animations */
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+<body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen flex">
 
-    <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] hidden flex-col items-center justify-center">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mb-4"></div>
-        <h2 class="text-xl font-semibold text-primary animate-pulse">กำลังประมวลผล...</h2>
+  <!-- Sidebar -->
+  <aside class="w-64 bg-brand-sidebar text-white flex flex-col justify-between hidden md:flex min-h-screen sticky top-0 shadow-lg">
+    <div>
+      <!-- Logo Header -->
+      <div class="p-6 flex items-center gap-3 border-b border-teal-800/50">
+        <i class="fa-solid fa-folder-closed text-teal-400 text-2xl"></i>
+        <span class="text-xl font-bold tracking-wide">E-Document</span>
+      </div>
+
+      <!-- User Info -->
+      <div class="p-6 text-center border-b border-teal-800/50">
+        <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-teal-100 flex items-center justify-center text-brand-800 text-3xl font-bold border-2 border-teal-300 shadow">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+        <h3 class="font-semibold text-lg text-teal-50">อัจฉราพร ขันธุแสง</h3>
+        <span class="inline-block px-3 py-0.5 mt-1 text-xs bg-teal-800 text-teal-200 rounded-full font-medium">ครู</span>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="p-4 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-teal-100 rounded-lg hover:bg-teal-800/60 transition">
+          <i class="fa-solid fa-chart-pie w-5"></i>
+          <span>แดชบอร์ด</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 bg-teal-800 text-white font-medium rounded-lg shadow-sm">
+          <i class="fa-solid fa-file-lines w-5"></i>
+          <span>จัดการเอกสาร</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-teal-100 rounded-lg hover:bg-teal-800/60 transition">
+          <i class="fa-solid fa-list-check w-5"></i>
+          <span>จัดการประเภท</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 text-teal-100 rounded-lg hover:bg-teal-800/60 transition">
+          <i class="fa-solid fa-id-card w-5"></i>
+          <span>ข้อมูลส่วนตัว</span>
+        </a>
+      </nav>
     </div>
 
-    <div id="app" class="flex-grow flex flex-col h-screen">
-        <!-- Views will be injected here -->
+    <!-- Logout Button -->
+    <div class="p-4 border-t border-teal-800/50">
+      <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-300 hover:bg-red-900/30 hover:text-red-200 rounded-lg transition text-left">
+        <i class="fa-solid fa-arrow-right-from-bracket w-5"></i>
+        <span>ออกจากระบบ</span>
+      </button>
     </div>
+  </aside>
 
-    <script>
-        
-        // ** นำ URL Web App ของคุณมาใส่ที่นี่ หากเว้นว่างไว้ ระบบจะใช้ Local Storage ชั่วคราว **
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxl63EhSY-P3zgaSCDdmPdjhploe3lQ_ID-S_JMgNL7mdJfif12-6JoSy5f4ggvoCZb/exec"; 
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Top Header -->
+    <header class="bg-white shadow-sm border-b px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <h1 class="text-lg md:text-xl font-bold text-gray-800">โรงเรียนยูงทองพิทยาคม</h1>
+        <p class="text-xs text-gray-500">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาอุดรธานี</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="relative p-2 text-gray-500 hover:text-brand-700 transition">
+          <i class="fa-regular fa-bell text-xl"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+      </div>
+    </header>
 
-        // Initial State
-        const state = {
-            currentUser: null,
-            currentView: 'login',
-            isMobile: window.innerWidth < 768,
-            sidebarOpen: false,
-            settings: { 
-                schoolName: "โรงเรียนตัวอย่าง", 
-                department: "สังกัดกระทรวงศึกษาธิการ", 
-                logo: "https://placehold.co/200x200/0C7C82/ffffff?text=LOGO" 
-            },
-            users: [
-                { id: '1', username: 'admin', password: 'admin1234', name: 'ผู้ดูแลระบบ สูงสุด', role: 'admin' },
-                { id: '2', username: 'teacher1', password: '1234', name: 'ครู สมชาย ใจดี', role: 'teacher' }
-            ],
-            years: [ { id: '1', year: '2567', color: '#0C7C82' }, { id: '2', year: '2566', color: '#4A2C6D' } ],
-            types: [ 
-                { id: '1', name: 'คำสั่ง', color: '#EF5350' }, 
-                { id: '2', name: 'ประกาศ', color: '#F57C00' },
-                { id: '3', name: 'หนังสือรับ', color: '#26A69A' }
-            ],
-            documents: [],
-            charts: {}
-        };
+    <!-- Content Body -->
+    <main class="p-6 md:p-8 flex-1 max-w-7xl mx-auto w-full">
+      
+      <!-- Page Title & Primary Action -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">จัดการเอกสารราชการ</h2>
+        </div>
+        <button onclick="openAddModal()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-medium rounded-lg shadow hover:shadow-md transition">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>อัปโหลดเอกสารใหม่</span>
+        </button>
+      </div>
 
-        // Utility: Show Loading
-        const showLoading = () => document.getElementById('global-loader').classList.remove('hidden');
-        const hideLoading = () => document.getElementById('global-loader').classList.add('hidden');
+      <!-- Filters Section -->
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Search Input -->
+        <div class="md:col-span-6 relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input type="text" id="searchInput" onkeyup="filterDocuments()" placeholder="ค้นหาเลขที่, เรื่อง..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition text-sm">
+        </div>
 
-        // Check Local Storage for demo persistence
-        function loadMockData() {
-            const stored = localStorage.getItem('gov_doc_sys');
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                state.settings = parsed.settings || state.settings;
-                state.users = parsed.users || state.users;
-                state.years = parsed.years || state.years;
-                state.types = parsed.types || state.types;
-                state.documents = parsed.documents || state.documents;
-            }
+        <!-- Filter Category -->
+        <div class="md:col-span-3">
+          <select id="filterCategory" onchange="filterDocuments()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm text-gray-600">
+            <option value="">ทุกประเภทเอกสาร</option>
+            <option value="คำสั่ง">คำสั่ง</option>
+            <option value="ประกาศ">ประกาศ</option>
+            <option value="หนังสือส่ง">หนังสือส่ง</option>
+            <option value="หนังสือรับ">หนังสือรับ</option>
+          </select>
+        </div>
+
+        <!-- Filter Year -->
+        <div class="md:col-span-3">
+          <select id="filterYear" onchange="filterDocuments()" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm text-gray-600">
+            <option value="">ทุกปีงบประมาณ</option>
+            <option value="2569">2569</option>
+            <option value="2568">2568</option>
+            <option value="2567">2567</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Documents Table Container -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm font-semibold">
+                <th class="p-4">เลขที่หนังสือ</th>
+                <th class="p-4">เรื่อง</th>
+                <th class="p-4">ประเภท</th>
+                <th class="p-4 text-center">ปีงบประมาณ</th>
+                <th class="p-4 text-center">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="documentTableBody" class="divide-y divide-gray-100 text-sm">
+              <!-- JS จะทำการ Render ข้อมูลใส่ตรงนี้ -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="mt-8 text-center text-xs text-gray-400">
+        ระบบจัดเก็บเอกสารราชการ © 2026 โรงเรียนยูงทองพิทยาคม
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: เพิ่มเอกสารใหม่ -->
+  <div id="addDocModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all">
+      <div class="bg-teal-800 text-white p-4 px-6 flex justify-between items-center">
+        <h3 class="font-bold text-lg">อัปโหลดเอกสารใหม่</h3>
+        <button onclick="closeAddModal()" class="text-teal-200 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form id="addDocForm" onsubmit="saveDocument(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">เลขที่หนังสือ</label>
+          <input type="text" id="docNo" required placeholder="เช่น 267/2569" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">เรื่อง / ชื่อเอกสาร</label>
+          <input type="text" id="docTitle" required placeholder="กรอกชื่อเรื่องหรือหัวข้อเอกสาร" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ประเภทเอกสาร</label>
+            <select id="docCategory" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+              <option value="คำสั่ง">คำสั่ง</option>
+              <option value="ประกาศ">ประกาศ</option>
+              <option value="หนังสือส่ง">หนังสือส่ง</option>
+              <option value="หนังสือรับ">หนังสือรับ</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ปีงบประมาณ</label>
+            <input type="text" id="docYear" required value="2569" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">ลิงก์ไฟล์เอกสาร (Google Drive URL)</label>
+          <input type="url" id="docUrl" placeholder="https://drive.google.com/file/d/.../view" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+          <p class="text-xs text-gray-400 mt-1">*นำลิงก์ที่แชร์จาก Google Drive หรือคลาวด์มาวางในช่องนี้</p>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t">
+          <button type="button" onclick="closeAddModal()" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm font-medium">ยกเลิก</button>
+          <button type="submit" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-sm font-medium">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // URL สำหรับเชื่อมต่อ Google Apps Script (ใส่เมื่อทำ Web App สด)
+    const GAS_API_URL = "";
+
+    // ข้อมูลจำลองตั้งต้น
+    let documents = [
+      {
+        id: 1,
+        docNo: "267/2569",
+        title: "คำสั่งจัดกิจกรรมการเรียนการสอนลูกเสือ เนตรนารี ประจำปีการศึกษา 2569",
+        category: "คำสั่ง",
+        year: "2569",
+        // ใส่ URL จริงของ Google Drive หรือไฟล์ PDF ตัวอย่างที่เปิดได้จริง
+        fileUrl: "https://drive.google.com/file/d/1sample_file_id/view?usp=sharing"
+      },
+      {
+        id: 2,
+        docNo: "105/2569",
+        title: "ประกาศเรื่อง การเปิดเรียนภาคเรียนที่ 1 ปีการศึกษา 2569",
+        category: "ประกาศ",
+        year: "2569",
+        fileUrl: "" // ตัวอย่างกรณีไม่มีไฟล์
+      }
+    ];
+
+    // โหลดข้อมูลลงตารางเมื่อเปิดหน้าเว็บ
+    document.addEventListener("DOMContentLoaded", () => {
+      renderDocuments(documents);
+    });
+
+    // -------------------------------------------------------------
+    // ฟังก์ชันสำคัญ: เปิดไฟล์เอกสารจริงในแท็บใหม่
+    // -------------------------------------------------------------
+    function viewFile(fileUrl) {
+      // ตรวจสอบว่ามี URL และขึ้นต้นด้วย http หรือ https หรือไม่
+      if (fileUrl && fileUrl.trim() !== "" && fileUrl !== "#" && (fileUrl.startsWith("http://") || fileUrl.startsWith("https://"))) {
+        // เปิดลิงก์เปิดไฟล์ในแท็บใหม่
+        window.open(fileUrl, "_blank");
+      } else {
+        // แจ้งเตือนเมื่อไม่พบลิงก์ไฟล์จริง
+        Swal.fire({
+          icon: 'warning',
+          title: 'ไม่พบลิงก์ไฟล์เอกสาร',
+          text: 'เอกสารนี้ยังไม่ได้ใส่ลิงก์ไฟล์ หรือยังไม่ได้อัปโหลดไฟล์ขึ้นระบบ',
+          confirmButtonColor: '#0f766e',
+          confirmButtonText: 'เข้าใจแล้ว'
+        });
+      }
+    }
+
+    // แสดงผลรายการในตาราง
+    function renderDocuments(data) {
+      const tbody = document.getElementById("documentTableBody");
+      tbody.innerHTML = "";
+
+      if (data.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-8 text-gray-400">
+              <i class="fa-regular fa-folder-open text-3xl mb-2"></i>
+              <p>ไม่พบรายการเอกสาร</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-gray-50 transition border-b border-gray-100";
+        row.innerHTML = `
+          <td class="p-4 font-medium text-gray-900">${item.docNo}</td>
+          <td class="p-4 text-gray-700 max-w-md">${item.title}</td>
+          <td class="p-4">
+            <span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md ${getCategoryBadge(item.category)}">
+              ${item.category}
+            </span>
+          </td>
+          <td class="p-4 text-center text-gray-600">${item.year}</td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <button onclick="viewFile('${item.fileUrl || ''}')" title="ดูไฟล์เอกสาร" class="p-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition">
+                <i class="fa-regular fa-eye text-base"></i>
+              </button>
+              <button onclick="deleteDoc(${item.id})" title="ลบ" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+                <i class="fa-regular fa-trash-can text-base"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // คืนค่า Class สีของป้ายประเภทเอกสาร
+    function getCategoryBadge(category) {
+      switch (category) {
+        case 'คำสั่ง': return 'bg-red-100 text-red-700';
+        case 'ประกาศ': return 'bg-blue-100 text-blue-700';
+        case 'หนังสือส่ง': return 'bg-amber-100 text-amber-700';
+        case 'หนังสือรับ': return 'bg-green-100 text-green-700';
+        default: return 'bg-gray-100 text-gray-700';
+      }
+    }
+
+    // ฟังก์ชันค้นหาและกรองข้อมูล
+    function filterDocuments() {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const category = document.getElementById("filterCategory").value;
+      const year = document.getElementById("filterYear").value;
+
+      const filtered = documents.filter(doc => {
+        const matchesSearch = doc.docNo.toLowerCase().includes(search) || doc.title.toLowerCase().includes(search);
+        const matchesCategory = category === "" || doc.category === category;
+        const matchesYear = year === "" || doc.year === year;
+        return matchesSearch && matchesCategory && matchesYear;
+      });
+
+      renderDocuments(filtered);
+    }
+
+    // ฟังก์ชันเปิด-ปิด Modal เพิ่มเอกสาร
+    function openAddModal() {
+      document.getElementById("addDocModal").classList.remove("hidden");
+      document.getElementById("addDocModal").classList.add("flex");
+    }
+
+    function closeAddModal() {
+      document.getElementById("addDocModal").classList.add("hidden");
+      document.getElementById("addDocModal").classList.remove("flex");
+      document.getElementById("addDocForm").reset();
+    }
+
+    // บันทึกเอกสารใหม่
+    function saveDocument(event) {
+      event.preventDefault();
+      
+      const newDoc = {
+        id: Date.now(),
+        docNo: document.getElementById("docNo").value,
+        title: document.getElementById("docTitle").value,
+        category: document.getElementById("docCategory").value,
+        year: document.getElementById("docYear").value,
+        fileUrl: document.getElementById("docUrl").value
+      };
+
+      documents.unshift(newDoc);
+      renderDocuments(documents);
+      closeAddModal();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'บันทึกสำเร็จ!',
+        text: 'เพิ่มรายการเอกสารเรียบร้อยแล้ว',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+
+    // ลบเอกสาร
+    function deleteDoc(id) {
+      Swal.fire({
+        title: 'ยืนยันการลบ?',
+        text: "คุณต้องการลบรายการเอกสารนี้ใช่หรือไม่",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'ลบข้อมูล',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          documents = documents.filter(d => d.id !== id);
+          renderDocuments(documents);
+          Swal.fire('ลบเรียบร้อย!', 'ข้อมูลถูกลบแล้ว', 'success');
         }
-        function saveMockData() {
-            localStorage.setItem('gov_doc_sys', JSON.stringify({
-                settings: state.settings, users: state.users, years: state.years, types: state.types, documents: state.documents
-            }));
-        }
-
-        window.addEventListener('resize', () => { state.isMobile = window.innerWidth < 768; });
-
-        
-        async function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            
-            showLoading();
-            setTimeout(() => { // Simulate API delay
-                const user = state.users.find(x => x.username === u && x.password === p);
-                if (user) {
-                    state.currentUser = user;
-                    Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', text: `ยินดีต้อนรับ ${user.name}`, timer: 1500, showConfirmButton: false });
-                    navigate('dashboard');
-                } else {
-                    Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
-                }
-                hideLoading();
-            }, 800);
-        }
-
-        function handleLogout() {
-            Swal.fire({
-                title: 'ออกจากระบบ?', text: "คุณต้องการออกจากระบบใช่หรือไม่?", icon: 'warning',
-                showCancelButton: true, confirmButtonColor: '#0C7C82', cancelButtonColor: '#EF5350',
-                confirmButtonText: 'ใช่, ออกจากระบบ', cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    state.currentUser = null;
-                    navigate('login');
-                }
-            });
-        }
-
-        function navigate(view) {
-            state.currentView = view;
-            render();
-            if(state.isMobile && state.sidebarOpen) toggleSidebar();
-        }
-
-        function render() {
-            const app = document.getElementById('app');
-            
-            if (state.currentView === 'login') {
-                app.innerHTML = renderLoginView();
-                return;
-            }
-
-            // Authenticated Layout (Admin & Teacher)
-            app.innerHTML = `
-                <div class="flex h-screen bg-gray-50 overflow-hidden relative">
-                    <!-- Sidebar -->
-                    <aside id="sidebar" class="bg-white w-64 shadow-xl flex-shrink-0 absolute md:relative z-40 h-full transition-transform duration-300 transform ${state.isMobile ? '-translate-x-full' : 'translate-x-0'}">
-                        <div class="h-16 flex items-center justify-center border-b border-gray-100 bg-primary text-white">
-                            <i class="fas fa-folder-open text-2xl mr-2"></i>
-                            <span class="text-xl font-bold truncate">E-Document</span>
-                        </div>
-                        <div class="p-4 flex flex-col items-center border-b border-gray-100">
-                            <img src="${state.settings.logo}" class="w-16 h-16 rounded-full object-cover border-2 border-secondary shadow-md mb-2" onerror="this.src='https://placehold.co/150/0C7C82/FFF?text=LOGO'">
-                            <span class="text-sm font-semibold text-gray-700 text-center">${state.currentUser.name}</span>
-                            <span class="text-xs bg-secondary text-white px-2 py-1 rounded-full mt-1">${state.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ครู'}</span>
-                        </div>
-                        <nav class="p-2 space-y-1 overflow-y-auto h-[calc(100vh-12rem)]">
-                            ${getMenuItems()}
-                        </nav>
-                        <div class="absolute bottom-0 w-full p-4 border-t bg-gray-50 hidden md:block">
-                            <button onclick="handleLogout()" class="w-full flex items-center justify-center px-4 py-2 text-redDark bg-red-50 hover:bg-red-100 rounded-lg transition">
-                                <i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ
-                            </button>
-                        </div>
-                    </aside>
-
-                    <!-- Overlay for mobile sidebar -->
-                    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden" onclick="toggleSidebar()"></div>
-
-                    <!-- Main Content -->
-                    <main class="flex-1 flex flex-col h-screen relative w-full overflow-hidden">
-                        <!-- Top Navbar (Desktop) -->
-                        <header class="bg-white shadow-sm h-16 flex items-center justify-between px-4 lg:px-8 z-10 shrink-0">
-                            <div class="flex items-center">
-                                <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-primary mr-4 text-xl">
-                                    <i class="fas fa-bars"></i>
-                                </button>
-                                <div>
-                                    <h1 class="text-lg font-bold text-gray-800">${state.settings.schoolName}</h1>
-                                    <p class="text-xs text-gray-500 hidden sm:block">${state.settings.department}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="text-gray-400 hover:text-primary relative"><i class="fas fa-bell text-xl"></i><span class="absolute top-0 right-0 h-2 w-2 bg-danger rounded-full"></span></button>
-                            </div>
-                        </header>
-
-                        <!-- Content Area -->
-                        <div class="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6 fade-in" id="main-content">
-                            ${renderCurrentPage()}
-                        </div>
-                        
-                        <!-- Footer -->
-                        <footer class="bg-white border-t py-3 text-center text-xs text-gray-500 hidden md:block shrink-0">
-                            ระบบจัดเก็บเอกสารราชการ © 2026 ${state.settings.schoolName}
-                        </footer>
-                    </main>
-
-                    <!-- Mobile Bottom Nav -->
-                    ${state.isMobile ? renderMobileNav() : ''}
-                </div>
-                <!-- Modals Container -->
-                <div id="modal-container"></div>
-            `;
-
-            // Post Render Logic (Charts)
-            if (state.currentView === 'dashboard') initDashboardCharts();
-        }
-
-        
-        function toggleSidebar() {
-            state.sidebarOpen = !state.sidebarOpen;
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            if (state.sidebarOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function getMenuItems() {
-            const role = state.currentUser.role;
-            let items = [
-                { id: 'dashboard', icon: 'fa-chart-pie', text: 'แดชบอร์ด', roles: ['admin', 'teacher'] },
-                { id: 'documents', icon: 'fa-file-alt', text: 'จัดการเอกสาร', roles: ['admin', 'teacher'] },
-                { id: 'doctypes', icon: 'fa-tags', text: 'จัดการประเภท', roles: ['admin', 'teacher'] }
-            ];
-
-            if (role === 'admin') {
-                items.push(
-                    { id: 'years', icon: 'fa-calendar-alt', text: 'ปีงบประมาณ', roles: ['admin'] },
-                    { id: 'users', icon: 'fa-users', text: 'จัดการผู้ใช้งาน', roles: ['admin'] },
-                    { id: 'settings', icon: 'fa-cogs', text: 'ตั้งค่าระบบ', roles: ['admin'] }
-                );
-            } else {
-                items.push({ id: 'profile', icon: 'fa-user-edit', text: 'ข้อมูลส่วนตัว', roles: ['teacher'] });
-            }
-
-            return items.map(item => `
-                <a href="#" onclick="navigate('${item.id}'); return false;" 
-                   class="flex items-center px-4 py-3 rounded-lg transition-colors ${state.currentView === item.id ? 'menu-item-active' : 'text-gray-600 hover:bg-gray-50 hover:text-primary'}">
-                    <i class="fas ${item.icon} w-6"></i>
-                    <span>${item.text}</span>
-                </a>
-            `).join('');
-        }
-
-        function renderMobileNav() {
-            const isT = state.currentUser.role === 'teacher';
-            return `
-                <nav id="mobile-nav" class="fixed bottom-4 left-4 right-4 rounded-2xl md:hidden z-40 flex justify-around items-center py-2 px-1 border border-gray-200">
-                    <a href="#" onclick="navigate('dashboard'); return false;" class="flex flex-col items-center p-2 ${state.currentView === 'dashboard' ? 'text-primary' : 'text-gray-400'}">
-                        <i class="fas fa-home text-xl mb-1"></i><span class="text-[10px]">หน้าแรก</span>
-                    </a>
-                    <a href="#" onclick="navigate('documents'); return false;" class="flex flex-col items-center p-2 ${state.currentView === 'documents' ? 'text-primary' : 'text-gray-400'}">
-                        <i class="fas fa-file-alt text-xl mb-1"></i><span class="text-[10px]">เอกสาร</span>
-                    </a>
-                    <a href="#" onclick="navigate('doctypes'); return false;" class="flex flex-col items-center p-2 ${state.currentView === 'doctypes' ? 'text-primary' : 'text-gray-400'}">
-                        <i class="fas fa-tags text-xl mb-1"></i><span class="text-[10px]">ประเภท</span>
-                    </a>
-                    ${isT ? 
-                    `<a href="#" onclick="navigate('profile'); return false;" class="flex flex-col items-center p-2 ${state.currentView === 'profile' ? 'text-primary' : 'text-gray-400'}">
-                        <i class="fas fa-user text-xl mb-1"></i><span class="text-[10px]">โปรไฟล์</span>
-                    </a>` : 
-                    `<a href="#" onclick="navigate('settings'); return false;" class="flex flex-col items-center p-2 ${state.currentView === 'settings' ? 'text-primary' : 'text-gray-400'}">
-                        <i class="fas fa-cog text-xl mb-1"></i><span class="text-[10px]">ตั้งค่า</span>
-                    </a>`
-                    }
-                    <a href="#" onclick="handleLogout(); return false;" class="flex flex-col items-center p-2 text-red-400">
-                        <i class="fas fa-sign-out-alt text-xl mb-1"></i><span class="text-[10px]">ออก</span>
-                    </a>
-                </nav>
-            `;
-        }
-
-        function renderLoginView() {
-            return `
-                <div class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, #0C7C82 0%, #35B4B0 100%);">
-                    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row fade-in">
-                        
-                        <!-- Info Panel -->
-                        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col items-center justify-center bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100">
-                            <img src="${state.settings.logo}" alt="Logo" class="w-32 h-32 object-contain mb-6 drop-shadow-md" onerror="this.src='https://placehold.co/200x200/0C7C82/ffffff?text=LOGO'">
-                            <h1 class="text-2xl font-bold text-primary text-center mb-2">ระบบจัดเก็บเอกสารราชการ</h1>
-                            <h2 class="text-lg text-gray-700 font-semibold text-center">${state.settings.schoolName}</h2>
-                            <p class="text-sm text-gray-500 mt-2 text-center">${state.settings.department}</p>
-                        </div>
-
-                        <!-- Login Form -->
-                        <div class="w-full md:w-1/2 p-8 md:p-12 bg-white flex flex-col justify-center">
-                            <div class="mb-8">
-                                <h2 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบ</h2>
-                                <p class="text-gray-500 text-sm mt-1">สำหรับผู้ดูแลระบบและครู</p>
-                            </div>
-                            <form onsubmit="handleLogin(event)" class="space-y-5">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-user text-gray-400"></i>
-                                        </div>
-                                        <input type="text" id="username" required class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="กรอกชื่อผู้ใช้งาน">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน (Password)</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-lock text-gray-400"></i>
-                                        </div>
-                                        <input type="password" id="password" required class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="กรอกรหัสผ่าน">
-                                    </div>
-                                </div>
-                                <button type="submit" class="w-full bg-primary hover:bg-[#095e63] text-white font-semibold py-3 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
-                                    เข้าสู่ระบบ
-                                </button>
-                                <div class="text-center mt-4 text-xs text-gray-400">
-                                    <p>ทดสอบ: admin / admin1234</p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderCurrentPage() {
-            switch(state.currentView) {
-                case 'dashboard': return renderDashboard();
-                case 'settings': return renderSettings();
-                case 'users': return renderUsers();
-                case 'years': return renderYears();
-                case 'doctypes': return renderDocTypes();
-                case 'documents': return renderDocuments();
-                case 'profile': return renderProfile();
-                default: return renderDashboard();
-            }
-        }
-
-        function renderDashboard() {
-            const totalDocs = state.documents.length;
-            
-            // Calculate type counts
-            const typeCounts = state.types.map(t => {
-                const count = state.documents.filter(d => d.typeId === t.id).length;
-                const percent = totalDocs === 0 ? 0 : Math.round((count / totalDocs) * 100);
-                return { ...t, count, percent };
-            });
-
-            // Mobile Shortcuts (iPhone style)
-            const mobileShortcuts = state.isMobile ? `
-                <div class="mb-6 block md:hidden">
-                    <h3 class="text-sm font-semibold text-gray-500 mb-3 ml-1">เมนูทางลัด</h3>
-                    <div class="grid grid-cols-4 gap-4">
-                        <button onclick="navigate('documents')" class="flex flex-col items-center focus:outline-none">
-                            <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-blueDark rounded-2xl shadow-sm flex items-center justify-center text-white mb-1"><i class="fas fa-file-alt text-2xl"></i></div>
-                            <span class="text-[11px] text-gray-700 font-medium">เอกสาร</span>
-                        </button>
-                        <button onclick="navigate('doctypes')" class="flex flex-col items-center focus:outline-none">
-                            <div class="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange rounded-2xl shadow-sm flex items-center justify-center text-white mb-1"><i class="fas fa-tags text-2xl"></i></div>
-                            <span class="text-[11px] text-gray-700 font-medium">ประเภท</span>
-                        </button>
-                        ${state.currentUser.role === 'admin' ? `
-                        <button onclick="navigate('users')" class="flex flex-col items-center focus:outline-none">
-                            <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple rounded-2xl shadow-sm flex items-center justify-center text-white mb-1"><i class="fas fa-users text-2xl"></i></div>
-                            <span class="text-[11px] text-gray-700 font-medium">ผู้ใช้</span>
-                        </button>
-                        <button onclick="navigate('settings')" class="flex flex-col items-center focus:outline-none">
-                            <div class="w-14 h-14 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl shadow-sm flex items-center justify-center text-white mb-1"><i class="fas fa-cog text-2xl"></i></div>
-                            <span class="text-[11px] text-gray-700 font-medium">ตั้งค่า</span>
-                        </button>
-                        ` : `
-                         <button onclick="navigate('profile')" class="flex flex-col items-center focus:outline-none">
-                            <div class="w-14 h-14 bg-gradient-to-br from-teal-400 to-primary rounded-2xl shadow-sm flex items-center justify-center text-white mb-1"><i class="fas fa-user-edit text-2xl"></i></div>
-                            <span class="text-[11px] text-gray-700 font-medium">โปรไฟล์</span>
-                        </button>
-                        `}
-                    </div>
-                </div>
-            ` : '';
-
-            // Type Cards
-            const typeCardsHTML = typeCounts.map(t => `
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-sm font-semibold text-gray-600">${t.name}</h4>
-                        <span class="text-lg font-bold" style="color: ${t.color}">${t.count}</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="h-2.5 rounded-full" style="width: ${t.percent}%; background-color: ${t.color}"></div>
-                    </div>
-                    <p class="text-xs text-right mt-1 text-gray-400">${t.percent}% ของทั้งหมด</p>
-                </div>
-            `).join('');
-
-            return `
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">แดชบอร์ดสรุปผล</h2>
-                    <p class="text-sm text-gray-500">ภาพรวมเอกสารในระบบ</p>
-                </div>
-                
-                ${mobileShortcuts}
-
-                <!-- Stats Overview -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-xl shadow-md p-6 relative overflow-hidden">
-                        <i class="fas fa-folder-open absolute -right-4 -bottom-4 text-white/20 text-7xl"></i>
-                        <h3 class="text-white/80 text-sm font-medium">เอกสารทั้งหมด</h3>
-                        <p class="text-4xl font-bold mt-1">${totalDocs} <span class="text-lg font-normal">ฉบับ</span></p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <!-- Progress Cards -->
-                    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        ${typeCardsHTML || '<div class="col-span-full text-center text-gray-400 py-4">ไม่มีข้อมูลประเภทเอกสาร</div>'}
-                    </div>
-                    
-                    <!-- Chart -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 h-64 flex flex-col">
-                        <h3 class="text-sm font-bold text-gray-700 mb-2">สัดส่วนเอกสาร</h3>
-                        <div class="flex-1 relative w-full flex justify-center">
-                            <canvas id="typeChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function initDashboardCharts() {
-            const ctx = document.getElementById('typeChart');
-            if(!ctx) return;
-            
-            const typeData = state.types.map(t => {
-                return { label: t.name, data: state.documents.filter(d => d.typeId === t.id).length, color: t.color }
-            }).filter(d => d.data > 0);
-
-            if(state.charts.typeChart) state.charts.typeChart.destroy();
-
-            state.charts.typeChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: typeData.map(d => d.label),
-                    datasets: [{
-                        data: typeData.map(d => d.data),
-                        backgroundColor: typeData.map(d => d.color),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Sarabun' } } } },
-                    cutout: '70%'
-                }
-            });
-        }
-
-        function renderSettings() {
-            return `
-                <div class="mb-6 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">ตั้งค่าระบบ</h2>
-                        <p class="text-sm text-gray-500">จัดการข้อมูลพื้นฐานของหน่วยงาน</p>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-2xl">
-                    <form onsubmit="saveSettings(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อโรงเรียน / หน่วยงาน</label>
-                            <input type="text" id="set-school" value="${state.settings.schoolName}" required class="w-full px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อสังกัด</label>
-                            <input type="text" id="set-dept" value="${state.settings.department}" required class="w-full px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">อัพโหลดรูปโลโก้ (URL หรือ Base64)</label>
-                            <div class="flex items-center space-x-4">
-                                <img src="${state.settings.logo}" id="logo-preview" class="w-16 h-16 rounded object-cover border bg-gray-50" onerror="this.src='https://placehold.co/100x100?text=LOGO'">
-                                <input type="text" id="set-logo" value="${state.settings.logo}" oninput="document.getElementById('logo-preview').src=this.value" class="flex-1 px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary" placeholder="https://...">
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1">* วาง URL ของรูปภาพ</p>
-                        </div>
-                        <div class="pt-4">
-                            <button type="submit" class="bg-primary hover:bg-[#095e63] text-white px-6 py-2 rounded-lg shadow transition">
-                                <i class="fas fa-save mr-2"></i> บันทึกการตั้งค่า
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `;
-        }
-
-        function saveSettings(e) {
-            e.preventDefault();
-            showLoading();
-            setTimeout(() => {
-                state.settings.schoolName = document.getElementById('set-school').value;
-                state.settings.department = document.getElementById('set-dept').value;
-                state.settings.logo = document.getElementById('set-logo').value;
-                saveMockData();
-                hideLoading();
-                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
-                render(); // refresh to update top bar
-            }, 500);
-        }
-
-        function renderUsers() {
-            let trs = state.users.map(u => `
-                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td class="py-3 px-4">${u.username}</td>
-                    <td class="py-3 px-4">${u.name}</td>
-                    <td class="py-3 px-4">
-                        <span class="px-2 py-1 text-xs rounded-full ${u.role==='admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}">
-                            ${u.role==='admin' ? 'ผู้ดูแลระบบ' : 'ครู'}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-right">
-                        <button onclick="openUserModal('${u.id}')" class="text-blue-500 hover:text-blue-700 mx-1 p-1"><i class="fas fa-edit"></i></button>
-                        ${u.username !== 'admin' ? `<button onclick="deleteData('users', '${u.id}')" class="text-red-500 hover:text-red-700 mx-1 p-1"><i class="fas fa-trash"></i></button>` : ''}
-                    </td>
-                </tr>
-            `).join('');
-
-            return `
-                <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">จัดการผู้ใช้งาน</h2>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <input type="file" id="excel-import" class="hidden" accept=".xlsx, .xls" onchange="importExcelUser(event)">
-                        <button onclick="document.getElementById('excel-import').click()" class="bg-accent2 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm transition shadow"><i class="fas fa-file-import mr-1"></i> นำเข้า</button>
-                        <button onclick="exportExcelUser()" class="bg-accent3 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm transition shadow"><i class="fas fa-file-export mr-1"></i> ส่งออก</button>
-                        <button onclick="openUserModal()" class="bg-primary hover:bg-[#095e63] text-white px-4 py-2 rounded-lg text-sm transition shadow flex-1 sm:flex-none"><i class="fas fa-plus mr-1"></i> เพิ่มผู้ใช้งาน</button>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse whitespace-nowrap">
-                            <thead>
-                                <tr class="bg-gray-50 text-gray-600 text-sm border-b">
-                                    <th class="py-3 px-4 font-semibold">Username</th>
-                                    <th class="py-3 px-4 font-semibold">ชื่อ-สกุล</th>
-                                    <th class="py-3 px-4 font-semibold">บทบาท</th>
-                                    <th class="py-3 px-4 font-semibold text-right">จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody>${trs || '<tr><td colspan="4" class="text-center py-4 text-gray-500">ไม่มีข้อมูล</td></tr>'}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
-
-        function openUserModal(id = null) {
-            let u = id ? state.users.find(x => x.id === id) : { id: Date.now().toString(), username: '', password: '', name: '', role: 'teacher' };
-            const modalHTML = `
-                <div id="u-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 fade-in">
-                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-                        <div class="bg-primary p-4 text-white flex justify-between items-center">
-                            <h3 class="font-bold text-lg">${id ? 'แก้ไขผู้ใช้งาน' : 'เพิ่มผู้ใช้งาน'}</h3>
-                            <button onclick="closeModal('u-modal')" class="text-white hover:text-gray-200"><i class="fas fa-times text-xl"></i></button>
-                        </div>
-                        <form onsubmit="saveUserForm(event, '${id}')" class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">Username</label>
-                                <input type="text" id="u-user" value="${u.username}" ${id && u.username==='admin' ? 'readonly' : 'required'} class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">Password</label>
-                                <input type="text" id="u-pass" value="${u.password}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">ชื่อ-สกุล</label>
-                                <input type="text" id="u-name" value="${u.name}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-2">บทบาท</label>
-                                <div class="flex space-x-4">
-                                    <label class="flex items-center"><input type="radio" name="u-role" value="teacher" ${u.role==='teacher' ? 'checked' : ''} class="mr-2 text-primary focus:ring-primary"> ครู</label>
-                                    <label class="flex items-center"><input type="radio" name="u-role" value="admin" ${u.role==='admin' ? 'checked' : ''} ${id && u.username==='admin'?'disabled':''} class="mr-2 text-primary focus:ring-primary"> ผู้ดูแลระบบ</label>
-                                </div>
-                            </div>
-                            <div class="pt-4 flex justify-end space-x-2">
-                                <button type="button" onclick="closeModal('u-modal')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">ยกเลิก</button>
-                                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#095e63]">บันทึก</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal-container').innerHTML = modalHTML;
-        }
-
-        function saveUserForm(e, isEdit) {
-            e.preventDefault();
-            const id = isEdit !== 'null' ? isEdit : Date.now().toString();
-            const user = {
-                id: id,
-                username: document.getElementById('u-user').value,
-                password: document.getElementById('u-pass').value,
-                name: document.getElementById('u-name').value,
-                role: document.querySelector('input[name="u-role"]:checked').value || 'teacher'
-            };
-            
-            if(isEdit !== 'null') {
-                const idx = state.users.findIndex(x => x.id === id);
-                state.users[idx] = user;
-            } else {
-                state.users.push(user);
-            }
-            saveMockData();
-            closeModal('u-modal');
-            render();
-            Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
-        }
-
-        function exportExcelUser() {
-            const ws = XLSX.utils.json_to_sheet(state.users.map(u => ({
-                Username: u.username, Password: u.password, Name: u.name, Role: u.role
-            })));
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Users");
-            XLSX.writeFile(wb, "Users_Template.xlsx");
-        }
-
-        function importExcelUser(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                try {
-                    const data = new Uint8Array(event.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const excelRows = XLSX.utils.sheet_to_json(firstSheet);
-                    
-                    let imported = 0;
-                    excelRows.forEach(row => {
-                        if(row.Username && row.Name) {
-                            state.users.push({
-                                id: Date.now().toString() + Math.random(),
-                                username: row.Username.toString(),
-                                password: row.Password ? row.Password.toString() : '1234',
-                                name: row.Name,
-                                role: row.Role === 'admin' ? 'admin' : 'teacher'
-                            });
-                            imported++;
-                        }
-                    });
-                    saveMockData();
-                    render();
-                    Swal.fire({ icon: 'success', title: 'นำเข้าสำเร็จ', text: `นำเข้า ${imported} รายการ` });
-                } catch(err) {
-                    Swal.fire({ icon: 'error', title: 'ข้อผิดพลาด', text: 'รูปแบบไฟล์ไม่ถูกต้อง' });
-                }
-                e.target.value = ''; // reset
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function deleteData(collection, id) {
-            Swal.fire({
-                title: 'ยืนยันการลบ?', text: "ข้อมูลนี้จะถูกลบอย่างถาวร!", icon: 'warning',
-                showCancelButton: true, confirmButtonColor: '#EF5350', cancelButtonColor: '#9CA3AF',
-                confirmButtonText: 'ลบข้อมูล', cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    state[collection] = state[collection].filter(x => x.id !== id);
-                    saveMockData();
-                    render();
-                    Swal.fire({ icon: 'success', title: 'ลบสำเร็จ', timer: 1000, showConfirmButton: false });
-                }
-            });
-        }
-
-        function closeModal(id) { document.getElementById(id).remove(); }
-
-        function renderYears() { return renderSimpleMaster('years', 'ปีงบประมาณ', 'year', 'fa-calendar-alt'); }
-        function renderDocTypes() { return renderSimpleMaster('types', 'ประเภทเอกสาร', 'name', 'fa-tags'); }
-
-        function renderSimpleMaster(collection, title, field, icon) {
-            let trs = state[collection].map(item => `
-                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                    <td class="py-3 px-4 flex items-center">
-                        <div class="w-4 h-4 rounded-full mr-3 shadow-sm" style="background-color: ${item.color || '#ccc'}"></div>
-                        ${item[field]}
-                    </td>
-                    <td class="py-3 px-4 text-right">
-                        <button onclick="openMasterModal('${collection}', '${item.id}', '${field}')" class="text-blue-500 hover:text-blue-700 mx-2"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteData('${collection}', '${item.id}')" class="text-red-500 hover:text-red-700 mx-2"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-
-            return `
-                <div class="mb-6 flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-gray-800">${title}</h2>
-                    <button onclick="openMasterModal('${collection}', null, '${field}')" class="bg-primary hover:bg-[#095e63] text-white px-4 py-2 rounded-lg text-sm transition shadow"><i class="fas fa-plus mr-1"></i> เพิ่ม</button>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-3xl">
-                    <table class="w-full text-left border-collapse">
-                        <thead><tr class="bg-gray-50 text-gray-600 text-sm border-b"><th class="py-3 px-4 font-semibold">ชื่อ/ปี</th><th class="py-3 px-4 text-right font-semibold">จัดการ</th></tr></thead>
-                        <tbody>${trs || '<tr><td colspan="2" class="text-center py-4 text-gray-500">ไม่มีข้อมูล</td></tr>'}</tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        function openMasterModal(col, id, field) {
-            let item = id ? state[col].find(x => x.id === id) : { id: Date.now().toString(), [field]: '', color: '#0C7C82' };
-            const mId = 'm-modal';
-            const modalHTML = `
-                <div id="${mId}" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 fade-in">
-                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
-                        <div class="bg-primary p-4 text-white flex justify-between items-center">
-                            <h3 class="font-bold text-lg">${id ? 'แก้ไข' : 'เพิ่ม'}</h3>
-                            <button onclick="closeModal('${mId}')" class="text-white hover:text-gray-200"><i class="fas fa-times"></i></button>
-                        </div>
-                        <form onsubmit="saveMasterForm(event, '${col}', '${id}', '${field}')" class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">ระบุข้อมูล</label>
-                                <input type="text" id="m-val" value="${item[field]}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">เลือกสี (Color Picker)</label>
-                                <div class="flex items-center space-x-2">
-                                    <input type="color" id="m-col" value="${item.color}" class="h-10 w-14 rounded cursor-pointer border-0 p-0">
-                                    <span class="text-xs text-gray-500">ใช้ตกแต่งป้ายกำกับ</span>
-                                </div>
-                            </div>
-                            <div class="pt-4 flex justify-end space-x-2">
-                                <button type="button" onclick="closeModal('${mId}')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">ยกเลิก</button>
-                                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg">บันทึก</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal-container').innerHTML = modalHTML;
-        }
-
-        function saveMasterForm(e, col, isEdit, field) {
-            e.preventDefault();
-            const id = isEdit !== 'null' ? isEdit : Date.now().toString();
-            const val = document.getElementById('m-val').value;
-            const color = document.getElementById('m-col').value;
-            
-            const obj = { id: id, [field]: val, color: color };
-            
-            if(isEdit !== 'null') {
-                const idx = state[col].findIndex(x => x.id === id);
-                state[col][idx] = obj;
-            } else {
-                state[col].push(obj);
-            }
-            saveMockData();
-            closeModal('m-modal');
-            render();
-            Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1000, showConfirmButton: false });
-        }
-
-        function renderProfile() {
-            const u = state.currentUser;
-            return `
-                <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">ข้อมูลส่วนตัว</h2></div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-md">
-                    <form onsubmit="saveProfile(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm text-gray-700 mb-1">Username (อ่านอย่างเดียว)</label>
-                            <input type="text" value="${u.username}" readonly class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-700 mb-1">ชื่อ-สกุล</label>
-                            <input type="text" id="p-name" value="${u.name}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-700 mb-1">รหัสผ่านใหม่</label>
-                            <input type="text" id="p-pass" value="${u.password}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                        </div>
-                        <button type="submit" class="w-full mt-4 bg-primary text-white py-2 rounded-lg shadow">อัพเดทข้อมูล</button>
-                    </form>
-                </div>
-            `;
-        }
-        function saveProfile(e) {
-            e.preventDefault();
-            state.currentUser.name = document.getElementById('p-name').value;
-            state.currentUser.password = document.getElementById('p-pass').value;
-            const idx = state.users.findIndex(x => x.id === state.currentUser.id);
-            if(idx > -1) state.users[idx] = state.currentUser;
-            saveMockData();
-            Swal.fire({ icon: 'success', title: 'อัพเดทสำเร็จ', timer: 1000, showConfirmButton: false });
-            render();
-        }
-
-        
-        let docState = { viewMode: window.innerWidth < 768 ? 'grid' : 'table', search: '', typeF: '', yearF: '', filesTemp: [] };
-
-        function renderDocuments() {
-            // Apply Filters
-            let list = state.documents;
-            if(docState.search) list = list.filter(d => d.docNum.includes(docState.search) || d.title.includes(docState.search));
-            if(docState.typeF) list = list.filter(d => d.typeId === docState.typeF);
-            if(docState.yearF) list = list.filter(d => d.yearId === docState.yearF);
-
-            // Sort new first
-            list.sort((a,b) => b.id - a.id);
-
-            const isMobile = window.innerWidth < 768;
-            if(isMobile) docState.viewMode = 'grid'; // Force grid default on mobile
-
-            // Build Options
-            const typeOpts = state.types.map(t => `<option value="${t.id}" ${docState.typeF===t.id?'selected':''}>${t.name}</option>`).join('');
-            const yearOpts = state.years.map(y => `<option value="${y.id}" ${docState.yearF===y.id?'selected':''}>${y.year}</option>`).join('');
-
-            return `
-                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div><h2 class="text-2xl font-bold text-gray-800">จัดการเอกสารราชการ</h2></div>
-                    <button onclick="openDocModal()" class="w-full md:w-auto bg-primary hover:bg-[#095e63] text-white px-4 py-2 rounded-lg text-sm shadow transition">
-                        <i class="fas fa-file-upload mr-2"></i> อัพโหลดเอกสารใหม่
-                    </button>
-                </div>
-
-                <!-- Filters & Controls -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-3 items-center">
-                    <div class="w-full md:w-1/3 relative">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        <input type="text" id="filter-search" value="${docState.search}" placeholder="ค้นหาเลขที่, เรื่อง..." oninput="updateDocFilter()" class="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary">
-                    </div>
-                    <select id="filter-type" onchange="updateDocFilter()" class="w-full md:w-1/4 px-3 py-2 border rounded-lg text-sm">
-                        <option value="">ทุกประเภท</option>${typeOpts}
-                    </select>
-                    <select id="filter-year" onchange="updateDocFilter()" class="w-full md:w-1/4 px-3 py-2 border rounded-lg text-sm">
-                        <option value="">ทุกปีงบประมาณ</option>${yearOpts}
-                    </select>
-                    <div class="hidden md:flex bg-gray-100 rounded-lg p-1 ml-auto">
-                        <button onclick="changeView('table')" class="p-2 rounded ${docState.viewMode==='table'?'bg-white shadow':''} text-gray-600"><i class="fas fa-list"></i></button>
-                        <button onclick="changeView('grid')" class="p-2 rounded ${docState.viewMode==='grid'?'bg-white shadow':''} text-gray-600"><i class="fas fa-th-large"></i></button>
-                    </div>
-                </div>
-
-                <!-- Display Content -->
-                <div id="doc-container" class="${docState.viewMode === 'table' ? 'table-view-container bg-white rounded-xl shadow-sm border border-gray-100' : 'grid-view-container'}">
-                    ${docState.viewMode === 'table' ? buildDocTable(list) : buildDocGrid(list)}
-                </div>
-            `;
-        }
-
-        function updateDocFilter() {
-            docState.search = document.getElementById('filter-search').value;
-            docState.typeF = document.getElementById('filter-type').value;
-            docState.yearF = document.getElementById('filter-year').value;
-            // Debounce re-render slightly
-            if(window.filterTimeout) clearTimeout(window.filterTimeout);
-            window.filterTimeout = setTimeout(render, 300);
-        }
-
-        function changeView(mode) { docState.viewMode = mode; render(); }
-
-        function getDocTypeBadge(typeId) {
-            const t = state.types.find(x => x.id === typeId);
-            return t ? `<span class="px-2 py-0.5 text-xs rounded text-white" style="background-color:${t.color}">${t.name}</span>` : '';
-        }
-        function getYearName(yId) { return (state.years.find(x => x.id === yId) || {}).year || '-'; }
-
-        function canEdit(doc) {
-            if(state.currentUser.role === 'admin') return true;
-            return doc.owner === state.currentUser.username;
-        }
-
-        function buildDocTable(list) {
-            let trs = list.map(d => `
-                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                    <td class="py-3 px-4 text-sm font-medium text-gray-700">${d.docNum || '-'}</td>
-                    <td class="py-3 px-4 text-sm text-gray-800 truncate max-w-[200px]">${d.title}</td>
-                    <td class="py-3 px-4">${getDocTypeBadge(d.typeId)}</td>
-                    <td class="py-3 px-4 text-sm">${getYearName(d.yearId)}</td>
-                    <td class="py-3 px-4 text-right whitespace-nowrap">
-                        <button onclick="viewDoc('${d.id}')" class="text-gray-500 hover:text-primary mx-1" title="ดูรายละเอียด"><i class="fas fa-eye"></i></button>
-                        ${canEdit(d) ? `
-                        <button onclick="openDocModal('${d.id}')" class="text-blue-500 hover:text-blue-700 mx-1" title="แก้ไข"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteData('documents', '${d.id}')" class="text-red-500 hover:text-red-700 mx-1" title="ลบ"><i class="fas fa-trash"></i></button>
-                        ` : '<span class="text-xs text-gray-400 mx-1"><i class="fas fa-lock"></i></span>'}
-                    </td>
-                </tr>
-            `).join('');
-
-            return `
-                <table class="w-full text-left border-collapse min-w-[700px]">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-600 text-sm border-b">
-                            <th class="py-3 px-4 font-semibold w-32">เลขที่หนังสือ</th>
-                            <th class="py-3 px-4 font-semibold">เรื่อง</th>
-                            <th class="py-3 px-4 font-semibold w-32">ประเภท</th>
-                            <th class="py-3 px-4 font-semibold w-24">ปีงบประมาณ</th>
-                            <th class="py-3 px-4 font-semibold text-right w-32">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>${trs || '<tr><td colspan="5" class="text-center py-8 text-gray-500">ไม่มีเอกสารที่ค้นหา</td></tr>'}</tbody>
-                </table>
-            `;
-        }
-
-        function buildDocGrid(list) {
-            if(list.length === 0) return `<div class="col-span-full text-center py-8 text-gray-500 bg-white rounded-xl border border-dashed">ไม่มีเอกสารที่ค้นหา</div>`;
-            return list.map(d => `
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative flex flex-col hover:shadow-md transition">
-                    <div class="flex justify-between items-start mb-2">
-                        ${getDocTypeBadge(d.typeId)}
-                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">ปี ${getYearName(d.yearId)}</span>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-1" title="${d.title}">${d.title}</h3>
-                    <p class="text-xs text-gray-500 mb-4 font-mono">ที่: ${d.docNum || 'ไม่ระบุ'}</p>
-                    
-                    <div class="mt-auto pt-3 border-t flex justify-between items-center">
-                        <div class="flex -space-x-2">
-                            ${d.files && d.files.length > 0 ? `<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full"><i class="fas fa-paperclip"></i> ${d.files.length} ไฟล์</span>` : '<span class="text-xs text-gray-400">-</span>'}
-                        </div>
-                        <div class="flex space-x-2">
-                            <button onclick="viewDoc('${d.id}')" class="w-8 h-8 rounded-full bg-gray-50 text-gray-600 flex items-center justify-center hover:bg-primary hover:text-white transition"><i class="fas fa-eye text-sm"></i></button>
-                            ${canEdit(d) ? `
-                            <button onclick="openDocModal('${d.id}')" class="w-8 h-8 rounded-full bg-gray-50 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition"><i class="fas fa-edit text-sm"></i></button>
-                            <button onclick="deleteData('documents', '${d.id}')" class="w-8 h-8 rounded-full bg-gray-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash text-sm"></i></button>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openDocModal(id = null) {
-            let d = id ? state.documents.find(x => x.id === id) : { id: Date.now().toString(), docNum: '', title: '', typeId: '', source: '', date: '', yearId: '', owner: state.currentUser.username, files: [] };
-            docState.filesTemp = [...(d.files || [])];
-
-            const typeOpts = state.types.map(t => `<option value="${t.id}" ${d.typeId===t.id?'selected':''}>${t.name}</option>`).join('');
-            const yearOpts = state.years.map(y => `<option value="${y.id}" ${d.yearId===y.id?'selected':''}>${y.year}</option>`).join('');
-
-            const modalHTML = `
-                <div id="d-modal" class="fixed inset-0 bg-black/50 z-50 flex justify-center p-0 md:p-4 fade-in overflow-y-auto">
-                    <div class="bg-white w-full max-w-3xl min-h-screen md:min-h-0 md:rounded-xl shadow-2xl flex flex-col">
-                        <div class="bg-primary p-4 text-white flex justify-between items-center sticky top-0 z-10 md:rounded-t-xl">
-                            <h3 class="font-bold text-lg"><i class="fas fa-file-alt mr-2"></i> ${id ? 'แก้ไขเอกสาร' : 'เพิ่มเอกสารใหม่'}</h3>
-                            <button onclick="closeModal('d-modal')" class="text-white hover:text-gray-200 p-2"><i class="fas fa-times text-xl"></i></button>
-                        </div>
-                        <form onsubmit="saveDocForm(event, '${id}')" class="p-6 flex-1 overflow-y-auto space-y-5">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm text-gray-700 mb-1">เลขที่หนังสือ (Plain Text)</label>
-                                    <input type="text" id="df-num" value="${d.docNum}" class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                                </div>
-                                <div>
-                                    <label class="block text-sm text-gray-700 mb-1">วันที่ออกเอกสาร</label>
-                                    <input type="date" id="df-date" value="${d.date}" class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">เรื่อง <span class="text-red-500">*</span></label>
-                                <input type="text" id="df-title" value="${d.title}" required class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm text-gray-700 mb-1">ประเภทเอกสาร</label>
-                                    <select id="df-type" class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                                        <option value="">เลือกประเภท</option>${typeOpts}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm text-gray-700 mb-1">ปีงบประมาณ</label>
-                                    <select id="df-year" class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                                        <option value="">เลือกปี</option>${yearOpts}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">หน่วยงานต้นเรื่อง</label>
-                                <input type="text" id="df-source" value="${d.source}" class="w-full px-3 py-2 border rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-
-                            <!-- File Upload Zone -->
-                            <div>
-                                <label class="block text-sm text-gray-700 mb-1">ไฟล์แนบ (ลากวาง หรือ คลิก)</label>
-                                <div id="drop-zone" class="drop-zone rounded-xl p-8 text-center cursor-pointer bg-gray-50 flex flex-col items-center justify-center">
-                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                                    <p class="text-sm text-gray-500">ลากไฟล์มาวางที่นี่ หรือ <span class="text-primary font-semibold">คลิกเพื่อเลือกไฟล์</span></p>
-                                    <input type="file" id="file-input" multiple class="hidden" onchange="handleFiles(this.files)">
-                                </div>
-                                <div id="file-preview" class="mt-3 space-y-2"></div>
-                            </div>
-
-                            <div class="pt-4 border-t sticky bottom-0 bg-white pb-4 flex justify-end space-x-3">
-                                <button type="button" onclick="closeModal('d-modal')" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition">ยกเลิก</button>
-                                <button type="submit" class="px-6 py-2.5 bg-primary text-white rounded-lg font-medium shadow hover:bg-[#095e63] transition flex items-center">
-                                    <i class="fas fa-save mr-2"></i> บันทึกข้อมูล
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal-container').innerHTML = modalHTML;
-            setupDragDrop();
-            renderFilePreview();
-        }
-
-        function setupDragDrop() {
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('file-input');
-
-            dropZone.onclick = () => fileInput.click();
-            dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
-            dropZone.ondragleave = () => dropZone.classList.remove('dragover');
-            dropZone.ondrop = (e) => {
-                e.preventDefault(); dropZone.classList.remove('dragover');
-                if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
-            };
-        }
-
-        function handleFiles(files) {
-            Array.from(files).forEach(file => {
-                // Simulate reading file (in real app, send to GAS to upload to Drive)
-                docState.filesTemp.push({ name: file.name, size: (file.size/1024).toFixed(1) + ' KB', type: file.type });
-            });
-            renderFilePreview();
-        }
-
-        function removeFile(index) {
-            docState.filesTemp.splice(index, 1);
-            renderFilePreview();
-        }
-
-        function renderFilePreview() {
-            const container = document.getElementById('file-preview');
-            container.innerHTML = docState.filesTemp.map((f, i) => `
-                <div class="flex items-center justify-between bg-white border border-gray-200 p-2 rounded-lg shadow-sm">
-                    <div class="flex items-center overflow-hidden">
-                        <i class="fas fa-file-pdf text-red-500 mr-2 text-lg"></i>
-                        <div class="truncate text-sm text-gray-700 w-48 md:w-auto">${f.name}</div>
-                        <div class="text-xs text-gray-400 ml-2 hidden md:block">(${f.size})</div>
-                    </div>
-                    <button type="button" onclick="removeFile(${i})" class="text-red-400 hover:text-red-600 p-1"><i class="fas fa-times"></i></button>
-                </div>
-            `).join('');
-        }
-
-        function saveDocForm(e, isEdit) {
-            e.preventDefault();
-            const id = isEdit !== 'null' ? isEdit : Date.now().toString();
-            const doc = {
-                id: id,
-                docNum: document.getElementById('df-num').value,
-                title: document.getElementById('df-title').value,
-                date: document.getElementById('df-date').value,
-                typeId: document.getElementById('df-type').value,
-                yearId: document.getElementById('df-year').value,
-                source: document.getElementById('df-source').value,
-                owner: isEdit !== 'null' ? state.documents.find(x=>x.id===id).owner : state.currentUser.username, // keep original owner if edit
-                files: [...docState.filesTemp]
-            };
-            
-            if(isEdit !== 'null') {
-                const idx = state.documents.findIndex(x => x.id === id);
-                state.documents[idx] = doc;
-            } else {
-                state.documents.push(doc);
-            }
-            saveMockData();
-            closeModal('d-modal');
-            render();
-            Swal.fire({ icon: 'success', title: 'บันทึกเอกสารสำเร็จ', timer: 1500, showConfirmButton: false });
-        }
-
-        function viewDoc(id) {
-            const d = state.documents.find(x => x.id === id);
-            if(!d) return;
-
-            const tName = (state.types.find(x=>x.id===d.typeId)||{}).name || '-';
-            const yName = getYearName(d.yearId);
-            
-            let filesHTML = d.files && d.files.length > 0 ? d.files.map(f => `
-                <div class="flex items-center bg-gray-50 p-2 rounded border mb-2 cursor-pointer hover:bg-gray-100" onclick="Swal.fire('จำลองการเปิดไฟล์','คุณได้คลิกเปิดไฟล์ ${f.name}','info')">
-                    <i class="fas fa-file-alt text-primary mr-2"></i><span class="text-sm text-gray-700">${f.name}</span>
-                </div>`).join('') : '<p class="text-sm text-gray-500">ไม่มีไฟล์แนบ</p>';
-
-            const modalHTML = `
-                <div id="v-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 fade-in">
-                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
-                        <div class="bg-gradient-to-r from-primary to-secondary p-4 text-white flex justify-between items-center">
-                            <h3 class="font-bold text-lg">รายละเอียดเอกสาร</h3>
-                            <button onclick="closeModal('v-modal')" class="text-white hover:text-gray-200"><i class="fas fa-times"></i></button>
-                        </div>
-                        <div class="p-6 space-y-4">
-                            <div class="border-b pb-3">
-                                <h4 class="text-xl font-bold text-gray-800 mb-1">${d.title}</h4>
-                                <div class="flex gap-2">
-                                    <span class="bg-primary/10 text-primary px-2 py-0.5 text-xs rounded">ประเภท: ${tName}</span>
-                                    <span class="bg-gray-100 text-gray-600 px-2 py-0.5 text-xs rounded">ปี: ${yName}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div><p class="text-gray-500 text-xs">เลขที่หนังสือ</p><p class="font-semibold">${d.docNum || '-'}</p></div>
-                                <div><p class="text-gray-500 text-xs">วันที่ออก</p><p class="font-semibold">${d.date || '-'}</p></div>
-                                <div class="col-span-2"><p class="text-gray-500 text-xs">หน่วยงานต้นเรื่อง</p><p class="font-semibold">${d.source || '-'}</p></div>
-                                <div class="col-span-2"><p class="text-gray-500 text-xs">ผู้บันทึก</p><p class="font-semibold text-gray-700">${d.owner}</p></div>
-                            </div>
-
-                            <div class="pt-4 border-t">
-                                <p class="text-gray-500 text-xs mb-2">ไฟล์แนบ</p>
-                                ${filesHTML}
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 p-4 text-right">
-                            <button onclick="closeModal('v-modal')" class="px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100">ปิด</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal-container').innerHTML = modalHTML;
-        }
-
-        window.onload = () => {
-            loadMockData(); // Load local storage fallback
-            // In a real scenario with GAS_API_URL provided, we would fetch data here
-            render();
-        };
-
-    </script>
+      });
+    }
+
+    function logout() {
+      Swal.fire({
+        title: 'ออกจากระบบ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ยกเลิก'
+      });
+    }
+  </script>
 </body>
 </html>
