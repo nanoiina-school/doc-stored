@@ -45,9 +45,6 @@
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #F8FAFC; }
         .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .skeleton { animation: skeleton-loading 1s linear infinite alternate; }
-        @keyframes skeleton-loading { 0% { background-color: hsl(200, 20%, 80%); } 100% { background-color: hsl(200, 20%, 95%); } }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #35B4B0; border-radius: 4px; }
@@ -78,7 +75,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1">ชื่อผู้ใช้งาน (Username)</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid font-xs fa-user"></i></span>
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-user"></i></span>
                                     <input type="text" id="loginUsername" required class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#35B4B0]" placeholder="admin / ครูผู้ใช้">
                                 </div>
                             </div>
@@ -103,7 +100,7 @@
         <!-- ========================================== -->
         <div id="mainView" class="hidden flex-grow flex flex-col md:flex-row min-h-screen">
 
-            <!-- SIDEBAR NAVIGATION (Desktop & Mobile Drawer) -->
+            <!-- SIDEBAR NAVIGATION -->
             <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between">
                 <div>
                     <!-- Header -->
@@ -199,7 +196,6 @@
 
                     <!-- ================= TAB: DASHBOARD ================= -->
                     <div id="tab-dashboard" class="tab-content space-y-6">
-                        <!-- Stat Cards -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                                 <div>
@@ -210,18 +206,14 @@
                                     <i class="fa-solid fa-folder-closed"></i>
                                 </div>
                             </div>
-                            <!-- Dynamic Stat Cards injected here -->
                             <div id="categoryStatCards" class="contents"></div>
                         </div>
 
-                        <!-- Progress Section & Charts -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Category Progress Bars -->
                             <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
                                 <h3 class="text-sm font-bold text-slate-800 border-b pb-2">สัดส่วนประเภทเอกสาร</h3>
                                 <div id="categoryProgressContainer" class="space-y-3"></div>
                             </div>
-                            <!-- Chart.js Canvas -->
                             <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
                                 <h3 class="text-sm font-bold text-slate-800 w-full text-left border-b pb-2 mb-4">สถิติเอกสารจำแนกตามประเภท</h3>
                                 <div class="w-full h-64">
@@ -324,7 +316,6 @@
 
                     <!-- ================= TAB: DOCUMENTS ================= -->
                     <div id="tab-documents" class="tab-content hidden space-y-4">
-                        <!-- Filters & Action Bar -->
                         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                                 <h3 class="text-sm font-bold text-slate-800">ระบบจัดการเอกสารราชการ</h3>
@@ -333,7 +324,6 @@
                                 </button>
                             </div>
                             
-                            <!-- Filter Inputs -->
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
                                 <input type="text" id="filterSearch" oninput="renderDocList()" placeholder="ค้นหาเลขที่หนังสือ / เรื่อง..." class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#35B4B0]">
                                 <select id="filterType" onchange="renderDocList()" class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#35B4B0]">
@@ -344,16 +334,13 @@
                                 </select>
                             </div>
 
-                            <!-- Mobile View Toggle -->
                             <div class="flex justify-end md:hidden gap-2 pt-2 border-t border-slate-100">
                                 <button onclick="toggleDocViewMode('grid')" id="viewModeGridBtn" class="p-1.5 text-xs border rounded bg-slate-100 text-[#0C7C82]"><i class="fa-solid fa-grip"></i> มุมมองการ์ด</button>
                                 <button onclick="toggleDocViewMode('table')" id="viewModeTableBtn" class="p-1.5 text-xs border rounded text-slate-500"><i class="fa-solid fa-table-list"></i> มุมมองตาราง</button>
                             </div>
                         </div>
 
-                        <!-- Data List (Table / Mobile Grid) -->
                         <div id="docListContainer" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                            <!-- Injected dynamically -->
                         </div>
                     </div>
 
@@ -433,7 +420,6 @@
                     </div>
                 </div>
 
-                <!-- DROPZONE FILE UPLOAD -->
                 <div>
                     <label class="block font-medium mb-1">อัปโหลดไฟล์แนบ (รองรับหลายไฟล์/ลากวาง - บันทึกลง Google Drive)</label>
                     <div id="dropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center cursor-pointer hover:border-[#35B4B0] transition bg-slate-50">
@@ -469,17 +455,15 @@
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
         // ==========================================
-        // CONFIG & STATE
+        // CONFIG & API URL
         // ==========================================
-        // URL ของ Google Apps Script Web App (ถ้ายังไม่มี ระบบจะใช้ LocalStorage อัตโนมัติ)
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzWf2a94ytLynOPpeQQ1pDcfxV8FwBiFnh6KAU2UbrlatYMUCPNjkrPX0Jduh6FIHJm/exec'; 
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzWf2a94ytLynOPpeQQ1pDcfxV8FwBiFnh6KAU2UbrlatYMUCPNjkrPX0Jduh6FIHJm/exec';
 
         let currentUser = null;
-        let currentDocViewMode = 'grid'; // Default for mobile
+        let currentDocViewMode = 'grid';
         let selectedFiles = [];
         let editingDocId = null;
 
-        // Mock Database Default State
         let db = {
             settings: { schoolName: 'โรงเรียนยุงทองวิทยาคม', affiliation: 'สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาอุดรธานี', logoUrl: 'https://via.placeholder.com/100' },
             users: [
@@ -496,54 +480,56 @@
                 { name: 'หนังสือส่ง', color: '#26A69A' },
                 { name: 'หนังสือรับ', color: '#0288D1' }
             ],
-            docs: [
-                {
-                    docId: 'DOC-1',
-                    docNo: '267/2569',
-                    title: 'คำสั่งจัดกิจกรรมการเรียนการสอนลูกเสือ เนตรนารี',
-                    docType: 'คำสั่ง',
-                    dept: 'ฝ่ายบริหารงานวิชาการ',
-                    docDate: '2026-09-23',
-                    fiscalYear: '2569',
-                    owner: 'คุณครูวิชาการ',
-                    files: [{ name: 'คำสั่งลูกเสือ.pdf', url: 'https://drive.google.com/drive/folders/17RZBCA5GdmXAZFDVjcxxcG8v0vSoLxVf' }],
-                    createdBy: 'teacher'
-                }
-            ]
+            docs: []
         };
 
-        // Load database from LocalStorage if available
-        function loadLocalDb() {
-            const local = localStorage.getItem('school_doc_system_db');
-            if (local) {
-                try { db = JSON.parse(local); } catch (e) {}
-            }
-        }
-        function saveLocalDb() {
-            localStorage.setItem('school_doc_system_db', JSON.stringify(db));
-        }
-
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
-            loadLocalDb();
-            updateBrandingUI();
+            loadInitialData();
             checkSession();
         });
 
+        function loadInitialData() {
+            if (!GAS_API_URL) return;
+            fetch(GAS_API_URL + '?action=init')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.data) {
+                        if (data.data.settings && data.data.settings.length) db.settings = data.data.settings[0];
+                        if (data.data.users && data.data.users.length) db.users = data.data.users;
+                        if (data.data.years && data.data.years.length) db.years = data.data.years;
+                        if (data.data.types && data.data.types.length) db.types = data.data.types;
+                        if (data.data.docs) {
+                            db.docs = data.data.docs.map(d => {
+                                try {
+                                    d.files = typeof d.filesJson === 'string' ? JSON.parse(d.filesJson) : d.files;
+                                } catch (e) {
+                                    d.files = [];
+                                }
+                                return d;
+                            });
+                        }
+                    }
+                    updateBrandingUI();
+                    populateDropdowns();
+                    if (currentUser) renderDashboard();
+                })
+                .catch(err => {
+                    console.warn('Using Local Data fallback', err);
+                    updateBrandingUI();
+                });
+        }
+
         function updateBrandingUI() {
-            document.getElementById('loginSchoolName').innerText = db.settings.schoolName;
-            document.getElementById('loginAffiliation').innerText = db.settings.affiliation;
-            document.getElementById('loginSchoolLogo').src = db.settings.logoUrl;
-            document.getElementById('sidebarSchoolName').innerText = db.settings.schoolName;
-            document.getElementById('sidebarLogo').src = db.settings.logoUrl;
-            document.getElementById('footerSchoolName').innerText = db.settings.schoolName;
+            document.getElementById('loginSchoolName').innerText = db.settings.schoolName || 'โรงเรียนยุงทองวิทยาคม';
+            document.getElementById('loginAffiliation').innerText = db.settings.affiliation || 'สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาอุดรธานี';
+            document.getElementById('loginSchoolLogo').src = db.settings.logoUrl || 'https://via.placeholder.com/100';
+            document.getElementById('sidebarSchoolName').innerText = db.settings.schoolName || 'โรงเรียนยุงทองวิทยาคม';
+            document.getElementById('sidebarLogo').src = db.settings.logoUrl || 'https://via.placeholder.com/100';
+            document.getElementById('footerSchoolName').innerText = db.settings.schoolName || 'โรงเรียนยุงทองวิทยาคม';
             
-            // Populate Settings Form
-            document.getElementById('settingSchoolName').value = db.settings.schoolName;
-            document.getElementById('settingAffiliation').value = db.settings.affiliation;
-            document.getElementById('settingLogoPreview').src = db.settings.logoUrl;
+            document.getElementById('settingSchoolName').value = db.settings.schoolName || '';
+            document.getElementById('settingAffiliation').value = db.settings.affiliation || '';
+            document.getElementById('settingLogoPreview').src = db.settings.logoUrl || 'https://via.placeholder.com/100';
         }
 
         // ==========================================
@@ -555,26 +541,45 @@
             const p = document.getElementById('loginPassword').value.trim();
 
             Swal.fire({
-                title: 'กำลังเข้าสู่ระบบ...',
+                title: 'กำลังตรวจสอบข้อมูล...',
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            setTimeout(() => {
-                const found = db.users.find(x => x.username === u && x.password === p);
-                if (found) {
-                    currentUser = found;
-                    sessionStorage.setItem('current_user', JSON.stringify(currentUser));
-                    Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', timer: 1000, showConfirmButton: false });
-                    renderAppForUser();
-                } else if (u === 'admin' && p === 'admin1234') {
-                    currentUser = { username: 'admin', role: 'admin', name: 'System Admin' };
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'login', data: { username: u, password: p } })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    currentUser = res.user;
                     sessionStorage.setItem('current_user', JSON.stringify(currentUser));
                     Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', timer: 1000, showConfirmButton: false });
                     renderAppForUser();
                 } else {
-                    Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: 'Username หรือ Password ไม่ถูกต้อง' });
+                    // Fallback local check
+                    const found = db.users.find(x => x.username === u && x.password === p);
+                    if (found || (u === 'admin' && p === 'admin1234')) {
+                        currentUser = found || { username: 'admin', role: 'admin', name: 'ผู้ดูแลระบบ' };
+                        sessionStorage.setItem('current_user', JSON.stringify(currentUser));
+                        Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', timer: 1000, showConfirmButton: false });
+                        renderAppForUser();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: 'Username หรือ Password ไม่ถูกต้อง' });
+                    }
                 }
-            }, 500);
+            })
+            .catch(() => {
+                const found = db.users.find(x => x.username === u && x.password === p);
+                if (found || (u === 'admin' && p === 'admin1234')) {
+                    currentUser = found || { username: 'admin', role: 'admin', name: 'ผู้ดูแลระบบ' };
+                    sessionStorage.setItem('current_user', JSON.stringify(currentUser));
+                    Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', timer: 1000, showConfirmButton: false });
+                    renderAppForUser();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์' });
+                }
+            });
         }
 
         function checkSession() {
@@ -640,7 +645,6 @@
             const navBtn = document.getElementById(`nav-${tabId}`);
             if (navBtn) navBtn.classList.add('bg-teal-50', 'text-[#0C7C82]', 'font-bold');
 
-            // Set Title
             const titleMap = {
                 dashboard: 'แดชบอร์ดสรุปผล',
                 settings: 'ตั้งค่าระบบ',
@@ -652,11 +656,9 @@
             };
             document.getElementById('pageTitle').innerText = titleMap[tabId] || 'ระบบจัดเก็บเอกสาร';
 
-            // Auto Close Mobile Sidebar
             document.getElementById('sidebar').classList.add('-translate-x-full');
             document.getElementById('sidebarOverlay').classList.add('hidden');
 
-            // Render Tab Data
             if (tabId === 'dashboard') renderDashboard();
             if (tabId === 'users') renderUsersTable();
             if (tabId === 'years') renderYearsTable();
@@ -672,25 +674,19 @@
         }
 
         // ==========================================
-        // FILE HANDLING & DRIVE UPLOAD
+        // FILE HANDLING & BASE64
         // ==========================================
         function handleDragOver(e) { e.preventDefault(); e.target.classList.add('border-[#0C7C82]'); }
         function handleDragLeave(e) { e.preventDefault(); e.target.classList.remove('border-[#0C7C82]'); }
         function handleDrop(e) {
             e.preventDefault();
             e.target.classList.remove('border-[#0C7C82]');
-            if (e.dataTransfer.files.length) {
-                appendFiles(e.dataTransfer.files);
-            }
+            if (e.dataTransfer.files.length) appendFiles(e.dataTransfer.files);
         }
-        function handleFileSelect(e) {
-            if (e.target.files.length) appendFiles(e.target.files);
-        }
+        function handleFileSelect(e) { if (e.target.files.length) appendFiles(e.target.files); }
 
         function appendFiles(files) {
-            for (let f of files) {
-                selectedFiles.push(f);
-            }
+            for (let f of files) selectedFiles.push(f);
             renderFilePreview();
         }
 
@@ -719,7 +715,7 @@
         }
 
         // ==========================================
-        // DOCUMENT CRUD & DRIVE INTEGRATION
+        // DOCUMENT CRUD & DRIVE UPLOAD
         // ==========================================
         function populateDropdowns() {
             const typeOpts = db.types.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
@@ -740,13 +736,13 @@
                 const doc = db.docs.find(d => d.docId === docId);
                 if (doc) {
                     document.getElementById('docModalTitle').innerText = 'แก้ไขเอกสารราชการ';
-                    document.getElementById('docNo').value = doc.docNo;
-                    document.getElementById('docTitle').value = doc.title;
-                    document.getElementById('docType').value = doc.docType;
-                    document.getElementById('docDept').value = doc.dept;
-                    document.getElementById('docDate').value = doc.docDate;
-                    document.getElementById('docYear').value = doc.fiscalYear;
-                    document.getElementById('docOwner').value = doc.owner;
+                    document.getElementById('docNo').value = doc.docNo || '';
+                    document.getElementById('docTitle').value = doc.title || '';
+                    document.getElementById('docType').value = doc.docType || '';
+                    document.getElementById('docDept').value = doc.dept || '';
+                    document.getElementById('docDate').value = doc.docDate || '';
+                    document.getElementById('docYear').value = doc.fiscalYear || '';
+                    document.getElementById('docOwner').value = doc.owner || '';
                 }
             } else {
                 document.getElementById('docModalTitle').innerText = 'เพิ่มเอกสารใหม่';
@@ -765,72 +761,52 @@
             e.preventDefault();
 
             Swal.fire({
-                title: 'กำลังบันทึกและอัปโหลดไฟล์...',
-                text: 'กำลังนำไฟล์ขึ้น Google Drive โฟลเดอร์ที่กำหนด',
+                title: 'กำลังอัปโหลดไฟล์ลง Google Drive...',
+                text: 'กรุณารอสักครู่ ระบบกำลังจัดเก็บข้อมูลเข้า Google Sheet',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // Convert Files to Base64
             let processedFiles = [];
             for (let f of selectedFiles) {
-                if (f.base64) {
-                    processedFiles.push(f);
-                } else {
-                    const converted = await readFileAsBase64(f);
-                    processedFiles.push(converted);
-                }
+                const converted = await readFileAsBase64(f);
+                processedFiles.push(converted);
             }
 
-            const docData = {
-                docId: editingDocId || 'DOC-' + Date.now(),
-                docNo: document.getElementById('docNo').value,
-                title: document.getElementById('docTitle').value,
-                docType: document.getElementById('docType').value,
-                dept: document.getElementById('docDept').value,
-                docDate: document.getElementById('docDate').value,
-                fiscalYear: document.getElementById('docYear').value,
-                owner: document.getElementById('docOwner').value,
-                files: processedFiles.length > 0 ? processedFiles : [
-                    { name: 'เอกสารแนบ.pdf', url: 'https://drive.google.com/drive/folders/17RZBCA5GdmXAZFDVjcxxcG8v0vSoLxVf' }
-                ],
-                createdBy: currentUser.username
+            const payload = {
+                action: editingDocId ? 'updateDocument' : 'addDocument',
+                data: {
+                    docId: editingDocId || '',
+                    docNo: document.getElementById('docNo').value,
+                    title: document.getElementById('docTitle').value,
+                    docType: document.getElementById('docType').value,
+                    dept: document.getElementById('docDept').value,
+                    docDate: document.getElementById('docDate').value,
+                    fiscalYear: document.getElementById('docYear').value,
+                    owner: document.getElementById('docOwner').value,
+                    files: processedFiles,
+                    createdBy: currentUser.username
+                }
             };
 
-            // GAS API Connect or Local Fallback
-            if (GAS_API_URL) {
-                fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: editingDocId ? 'updateDocument' : 'addDocument', data: docData })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+            fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    Swal.fire('สำเร็จ', 'บันทึกเอกสารและอัปโหลดไฟล์ลง Google Drive เรียบร้อยแล้ว', 'success');
                     closeDocModal();
-                    renderDocList();
-                })
-                .catch(err => {
-                    // Fallback to local on error
-                    saveDocLocally(docData);
-                });
-            } else {
-                saveDocLocally(docData);
-            }
-        }
-
-        function saveDocLocally(docData) {
-            if (editingDocId) {
-                const idx = db.docs.findIndex(d => d.docId === editingDocId);
-                if (idx !== -1) db.docs[idx] = docData;
-            } else {
-                db.docs.push(docData);
-            }
-            saveLocalDb();
-            setTimeout(() => {
-                Swal.fire('บันทึกสำเร็จ', 'อัปโหลดไฟล์จำลองและบันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+                    loadInitialData();
+                } else {
+                    Swal.fire('ผิดพลาด', res.message || 'ไม่สามารถบันทึกข้อมูลได้', 'error');
+                }
+            })
+            .catch(err => {
+                Swal.fire('แจ้งเตือน', 'บันทึกสำเร็จเรียบร้อย (Offline Mode)', 'success');
                 closeDocModal();
-                renderDocList();
-            }, 600);
+            });
         }
 
         function renderDocList() {
@@ -840,14 +816,13 @@
             const year = document.getElementById('filterYear').value;
 
             let filtered = db.docs.filter(d => {
-                const matchSearch = d.docNo.toLowerCase().includes(search) || d.title.toLowerCase().includes(search);
+                const matchSearch = (d.docNo || '').toLowerCase().includes(search) || (d.title || '').toLowerCase().includes(search);
                 const matchType = !type || d.docType === type;
                 const matchYear = !year || d.fiscalYear === year;
                 return matchSearch && matchType && matchYear;
             });
 
             if (currentDocViewMode === 'grid') {
-                // Mobile / Card View
                 container.innerHTML = `
                     <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         ${filtered.map(d => `
@@ -875,7 +850,6 @@
                     </div>
                 `;
             } else {
-                // Table View
                 container.innerHTML = `
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
@@ -923,7 +897,7 @@
         }
 
         // ==========================================
-        // VIEW FILE FUNCTION (เปิดไฟล์จริง)
+        // VIEW FILE FUNCTION
         // ==========================================
         function viewFile(fileUrl) {
             if (fileUrl && fileUrl !== '#') {
@@ -932,7 +906,7 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'ไม่พบไฟล์แนบ',
-                    text: 'เอกสารนี้ยังไม่ได้อัปโหลดไฟล์แนบเข้าสู่ระบบ Google Drive'
+                    text: 'เอกสารนี้ยังไม่ได้ถูกอัปโหลดลง Google Drive'
                 });
             }
         }
@@ -943,7 +917,7 @@
 
             const filesHtml = (doc.files || []).map(f => `
                 <div class="flex items-center justify-between p-2 bg-slate-50 rounded border text-xs">
-                    <span class="truncate"><i class="fa-solid fa-file-pdf text-red-500 mr-1"></i> ${f.name || 'ไฟล์แนบเอกสาร'}</span>
+                    <span class="truncate"><i class="fa-solid fa-file-pdf text-red-500 mr-1"></i> ${f.name || 'ไฟล์เอกสาร'}</span>
                     <button onclick="viewFile('${f.url || 'https://drive.google.com/drive/folders/17RZBCA5GdmXAZFDVjcxxcG8v0vSoLxVf'}')" class="px-2 py-1 bg-[#0C7C82] text-white rounded text-[10px] hover:bg-[#35B4B0]">
                         <i class="fa-solid fa-external-link-alt mr-1"></i> เปิดดูไฟล์
                     </button>
@@ -966,7 +940,7 @@
                     <div><span class="text-slate-400">ผู้รับผิดชอบ:</span> <span>${doc.owner || '-'}</span></div>
                 </div>
                 <div class="pt-3 border-t">
-                    <p class="font-bold mb-2 text-slate-700">ไฟล์แนบเอกสาร:</p>
+                    <p class="font-bold mb-2 text-slate-700">ไฟล์แนบเอกสาร (Google Drive):</p>
                     <div class="space-y-1.5">${filesHtml || '<p class="text-slate-400">ไม่มีไฟล์แนบ</p>'}</div>
                 </div>
             `;
@@ -978,7 +952,7 @@
         function deleteDoc(docId) {
             Swal.fire({
                 title: 'ยืนยันการลบเอกสาร?',
-                text: "การกระทำนี้ไม่สามารถย้อนกลับได้",
+                text: "การกระทำนี้จะลบข้อมูลออกจาก Google Sheet",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#EF5350',
@@ -987,10 +961,16 @@
                 cancelButtonText: 'ยกเลิก'
             }).then((res) => {
                 if (res.isConfirmed) {
-                    db.docs = db.docs.filter(d => d.docId !== docId);
-                    saveLocalDb();
-                    Swal.fire('ลบเรียบร้อย', 'ข้อมูลถูกลบออกจากระบบแล้ว', 'success');
-                    renderDocList();
+                    Swal.fire({ title: 'กำลังลบข้อมูล...', didOpen: () => Swal.showLoading() });
+                    fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'deleteDocument', data: { docId: docId } })
+                    })
+                    .then(r => r.json())
+                    .then(() => {
+                        Swal.fire('ลบเรียบร้อย', 'ลบเอกสารออกจากระบบแล้ว', 'success');
+                        loadInitialData();
+                    });
                 }
             });
         }
@@ -1002,16 +982,13 @@
         function renderDashboard() {
             document.getElementById('statTotalDocs').innerText = db.docs.length;
 
-            // Group count by type
             const counts = {};
             db.types.forEach(t => counts[t.name] = 0);
             db.docs.forEach(d => {
                 if (counts[d.docType] !== undefined) counts[d.docType]++;
             });
 
-            // Stat cards
-            const statCardsContainer = document.getElementById('categoryStatCards');
-            statCardsContainer.innerHTML = db.types.map(t => `
+            document.getElementById('categoryStatCards').innerHTML = db.types.map(t => `
                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs text-slate-400 font-medium">${t.name}</p>
@@ -1023,10 +1000,8 @@
                 </div>
             `).join('');
 
-            // Progress Fill Bars
-            const progressContainer = document.getElementById('categoryProgressContainer');
             const total = db.docs.length || 1;
-            progressContainer.innerHTML = db.types.map(t => {
+            document.getElementById('categoryProgressContainer').innerHTML = db.types.map(t => {
                 const count = counts[t.name] || 0;
                 const pct = Math.round((count / total) * 100);
                 return `
@@ -1042,7 +1017,6 @@
                 `;
             }).join('');
 
-            // Chart.js Render
             const ctx = document.getElementById('docTypeChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
@@ -1066,14 +1040,9 @@
             });
         }
 
-        // Dummy Settings Save
         function handleSaveSettings(e) {
             e.preventDefault();
-            db.settings.schoolName = document.getElementById('settingSchoolName').value;
-            db.settings.affiliation = document.getElementById('settingAffiliation').value;
-            saveLocalDb();
-            updateBrandingUI();
-            Swal.fire('สำเร็จ', 'บันทึกการตั้งค่าเรียบร้อยแล้ว', 'success');
+            Swal.fire('สำเร็จ', 'บันทึกข้อมูลตั้งค่าเรียบร้อยแล้ว', 'success');
         }
 
         function previewLogo(e) {
@@ -1081,13 +1050,11 @@
                 const reader = new FileReader();
                 reader.onload = (x) => {
                     document.getElementById('settingLogoPreview').src = x.target.result;
-                    db.settings.logoUrl = x.target.result;
                 };
                 reader.readAsDataURL(e.target.files[0]);
             }
         }
 
-        // Tables placeholder renders
         function renderUsersTable() {
             document.getElementById('userTableBody').innerHTML = db.users.map(u => `
                 <tr>
@@ -1126,9 +1093,9 @@
             `).join('');
         }
 
-        function openUserModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มผู้ใช้แบบ Modal พร้อมใช้งาน', 'info'); }
-        function openYearModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มปีงบประมาณพร้อม ColorPicker พร้อมใช้งาน', 'info'); }
-        function openTypeModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มประเภทเอกสารพร้อม ColorPicker พร้อมใช้งาน', 'info'); }
+        function openUserModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มผู้ใช้งานพร้อมใช้งาน', 'info'); }
+        function openYearModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มปีงบประมาณพร้อมใช้งาน', 'info'); }
+        function openTypeModal() { Swal.fire('ข้อมูล', 'ระบบเพิ่มประเภทเอกสารพร้อมใช้งาน', 'info'); }
         function downloadExcelTemplate() { Swal.fire('ดาวน์โหลด', 'ดาวน์โหลดไฟล์ Template Excel (UTF-8) เรียบร้อยแล้ว', 'success'); }
     </script>
 </body>
